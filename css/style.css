@@ -1,0 +1,352 @@
+html, body {
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+body {
+    background-image: linear-gradient(bottom, rgb(54,63,69) 29%, rgb(75,95,109) 71%, rgb(75,95,109) 86%);
+    background-image: -o-linear-gradient(bottom, rgb(54,63,69) 29%, rgb(75,95,109) 71%, rgb(75,95,109) 86%);
+    background-image: -moz-linear-gradient(bottom, rgb(54,63,69) 29%, rgb(75,95,109) 71%, rgb(75,95,109) 86%);
+    background-image: -webkit-linear-gradient(bottom, rgb(54,63,69) 29%, rgb(75,95,109) 71%, rgb(75,95,109) 86%);
+    background-image: -ms-linear-gradient(bottom, rgb(54,63,69) 29%, rgb(75,95,109) 71%, rgb(75,95,109) 86%);
+
+    background-image: -webkit-gradient(
+            linear,
+            left bottom,
+            left top,
+            color-stop(0.29, rgb(54,63,69)),
+            color-stop(0.71, rgb(75,95,109)),
+            color-stop(0.86, rgb(75,95,109))
+    );
+    
+    font-family: 'Viga', sans-serif;
+    overflow: hidden;
+}
+
+#canvas {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+    background-image: url("../images/redcar.jpg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+section {
+    display: none;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+}
+
+.button {
+    display: inline-block;
+    margin: 10px;
+    padding: 15px;
+    border: 1px solid rgba(254,180,28,0.5);
+    
+    background-image: linear-gradient(bottom, rgba(54,63,69, 0.8) 29%, rgba(75,95,109, 0.8) 71%, rgba(75,95,109,0.8) 86%);
+    background-image: -o-linear-gradient(bottom, rgba(54,63,69, 0.8) 29%, rgba(75,95,109, 0.8) 71%, rgba(75,95,109,0.8) 86%);
+    background-image: -moz-linear-gradient(bottom, rgba(54,63,69, 0.8) 29%, rgba(75,95,109, 0.8) 71%, rgba(75,95,109,0.8) 86%);
+    background-image: -webkit-linear-gradient(bottom, rgba(54,63,69, 0.8) 29%, rgba(75,95,109, 0.8) 71%, rgba(75,95,109,0.8) 86%);
+    background-image: -ms-linear-gradient(bottom, rgba(54,63,69, 0.8) 29%, rgba(75,95,109, 0.8) 71%, rgba(75,95,109,0.8) 86%);
+
+    background-image: -webkit-gradient(
+            linear,
+            left bottom,
+            left top,
+            color-stop(0.29, rgba(54,63,69,0.8)),
+            color-stop(0.71, rgba(75,95,109,0.8)),
+            color-stop(0.86, rgba(75,95,109,0.8))
+    );
+    
+    border-radius: 10px;
+    color: white;
+    font-size: 25px;
+    cursor: pointer;
+    box-shadow: 0px 0px 5px rgba(0,0,0,0.5);
+    text-shadow: 0px 0px 3px rgba(255,255,255,0.6);
+    
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.button.active, .button.active:hover {
+    background-image: -linear-gradient(bottom, rgb(89,113,130) 29%, rgb(112,132,143) 71%);
+    background-image: -o-linear-gradient(bottom, rgb(89,113,130) 29%, rgb(112,132,143) 71%);
+    background-image: -moz-linear-gradient(bottom, rgb(89,113,130) 29%, rgb(112,132,143) 71%);
+    background-image: -webkit-linear-gradient(bottom, rgb(89,113,130) 29%, rgb(112,132,143) 71%);
+    background-image: -ms-linear-gradient(bottom, rgb(89,113,130) 29%, rgb(112,132,143) 71%);
+
+    background-image: -webkit-gradient(
+            linear,
+            left bottom,
+            left top,
+            color-stop(0.29, rgb(89,113,130)),
+            color-stop(0.71, rgb(112,132,143))
+    );
+}
+
+.button:hover, .button.dialog:hover {
+    background-image: linear-gradient(bottom, rgb(54,63,69) 29%, rgb(75,95,109) 71%, rgb(75,95,109) 86%);
+    background-image: -o-linear-gradient(bottom, rgb(54,63,69) 29%, rgb(75,95,109) 71%, rgb(75,95,109) 86%);
+    background-image: -moz-linear-gradient(bottom, rgb(54,63,69) 29%, rgb(75,95,109) 71%, rgb(75,95,109) 86%);
+    background-image: -webkit-linear-gradient(bottom, rgb(54,63,69) 29%, rgb(75,95,109) 71%, rgb(75,95,109) 86%);
+    background-image: -ms-linear-gradient(bottom, rgb(54,63,69) 29%, rgb(75,95,109) 71%, rgb(75,95,109) 86%);
+
+    background-image: -webkit-gradient(
+            linear,
+            left bottom,
+            left top,
+            color-stop(0.29, rgb(54,63,69)),
+            olor-stop(0.71, rgb(75,95,109)),
+            color-stop(0.86, rgb(75,95,109))
+    );
+}
+
+.button.dialog {
+    padding: 20px;
+    
+    background-image: linear-gradient(bottom, rgba(54,63,69, 0.4) 29%, rgba(75,95,109, 0.4) 71%, rgba(75,95,109,0.4) 86%);
+    background-image: -o-linear-gradient(bottom, rgba(54,63,69, 0.4) 29%, rgba(75,95,109, 0.4) 71%, rgba(75,95,109,0.4) 86%);
+    background-image: -moz-linear-gradient(bottom, rgba(54,63,69, 0.4) 29%, rgba(75,95,109, 0.4) 71%, rgba(75,95,109,0.4) 86%);
+    background-image: -webkit-linear-gradient(bottom, rgba(54,63,69, 0.4) 29%, rgba(75,95,109, 0.4) 71%, rgba(75,95,109,0.4) 86%);
+    background-image: -ms-linear-gradient(bottom, rgba(54,63,69, 0.4) 29%, rgba(75,95,109, 0.4) 71%, rgba(75,95,109,0.4) 86%);
+
+    background-image: -webkit-gradient(
+            linear,
+            left bottom,
+            left top,
+            color-stop(0.29, rgba(54,63,69,0.4)),
+            color-stop(0.71, rgba(75,95,109,0.4)),
+            color-stop(0.46, rgba(75,95,109,0.4))
+    );
+    
+    position: absolute;
+    left: 50%;
+    margin-left: -250px;
+    width: 500px;
+}
+
+.button.dialog h1 {
+    margin: 0.2em;
+    font-size: 26px;
+}
+
+
+.button.green {
+    background-image: linear-gradient(bottom, rgba(62,112,33,0.6) 0%, rgba(118,209,57,0.6) 100%);
+    background-image: -o-linear-gradient(bottom, rgba(62,112,33,0.6) 0%, rgba(118,209,57,0.6) 100%);
+    background-image: -moz-linear-gradient(bottom, rgba(62,112,33,0.6) 0%, rgba(118,209,57,0.6) 100%);
+    background-image: -webkit-linear-gradient(bottom, rgba(62,112,33,0.6) 0%, rgba(118,209,57,0.6) 100%);
+    background-image: -ms-linear-gradient(bottom, rgba(62,112,33,0.6) 0%, rgba(118,209,57,0.6) 100%);
+
+    background-image: -webkit-gradient(
+            linear,
+            left bottom,
+            left top,
+            color-stop(0, rgba(62,112,33,0.6)),
+            color-stop(1, rgba(118,209,57,0.6))
+    );
+}
+
+.button.green:hover {
+    background-image: linear-gradient(bottom, rgb(62,112,33) 0%, rgb(118,209,57) 100%);
+    background-image: -o-linear-gradient(bottom, rgb(62,112,33) 0%, rgb(118,209,57) 100%);
+    background-image: -moz-linear-gradient(bottom, rgb(62,112,33) 0%, rgb(118,209,57) 100%);
+    background-image: -webkit-linear-gradient(bottom, rgb(62,112,33) 0%, rgb(118,209,57) 100%);
+    background-image: -ms-linear-gradient(bottom, rgb(62,112,33) 0%, rgb(118,209,57) 100%);
+
+    background-image: -webkit-gradient(
+            linear,
+            left bottom,
+            left top,
+            color-stop(0, rgb(62,112,33)),
+            color-stop(1, rgb(118,209,57))
+    );
+}
+
+
+.button.red {
+    background-image: linear-gradient(bottom, rgba(110,33,33, 0.4) 0%, rgba(207,58,58, 0.4) 100%);
+    background-image: -o-linear-gradient(bottom, rgba(110,33,33, 0.4) 0%, rgba(207,58,58, 0.4) 100%);
+    background-image: -moz-linear-gradient(bottom, rgba(110,33,33, 0.4) 0%, rgba(207,58,58, 0.4) 100%);
+    background-image: -webkit-linear-gradient(bottom, rgba(110,33,33, 0.4) 0%, rgba(207,58,58, 0.4) 100%);
+    background-image: -ms-linear-gradient(bottom, rgba(110,33,33, 0.4) 0%, rgba(207,58,58, 0.4) 100%);
+
+    background-image: -webkit-gradient(
+            linear,
+            left bottom,
+            left top,
+            color-stop(0, rgba(110,33,33, 0.4)),
+            color-stop(1, rgba(207,58,58, 0.4))
+    );
+}
+
+.button.red:hover {
+    background-image: linear-gradient(bottom, rgb(110,33,33) 0%, rgb(207,58,58) 100%);
+    background-image: -o-linear-gradient(bottom, rgb(110,33,33) 0%, rgb(207,58,58) 100%);
+    background-image: -moz-linear-gradient(bottom, rgb(110,33,33) 0%, rgb(207,58,58) 100%);
+    background-image: -webkit-linear-gradient(bottom, rgb(110,33,33) 0%, rgb(207,58,58) 100%);
+    background-image: -ms-linear-gradient(bottom, rgb(110,33,33) 0%, rgb(207,58,58) 100%);
+
+    background-image: -webkit-gradient(
+            linear,
+            left bottom,
+            left top,
+            color-stop(0, rgb(110,33,33)),
+            color-stop(1, rgb(207,58,58))
+    );
+}
+
+#filemenubutton {
+    position: relative;
+    top: -58px;
+    margin: 0;
+    border-radius: 0px;
+    border-top-right-radius: 10px;
+    padding-bottom: 5px;
+    border-bottom: 0px;
+    border-left: 0px;
+    box-shadow: none;
+}
+
+footer {
+    position: absolute;
+    bottom: -300px;
+    height: 300px;
+    width: 100%;
+    
+    border-top: 2px solid rgba(254,180,28,0.5);
+    
+    background-image: linear-gradient(bottom, rgba(54,63,69, 0.8) 29%, rgba(75,95,109, 0.8) 71%, rgba(75,95,109,0.8) 86%);
+    background-image: -o-linear-gradient(bottom, rgba(54,63,69, 0.8) 29%, rgba(75,95,109, 0.8) 71%, rgba(75,95,109,0.8) 86%);
+    background-image: -moz-linear-gradient(bottom, rgba(54,63,69, 0.8) 29%, rgba(75,95,109, 0.8) 71%, rgba(75,95,109,0.8) 86%);
+    background-image: -webkit-linear-gradient(bottom, rgba(54,63,69, 0.8) 29%, rgba(75,95,109, 0.8) 71%, rgba(75,95,109,0.8) 86%);
+    background-image: -ms-linear-gradient(bottom, rgba(54,63,69, 0.8) 29%, rgba(75,95,109, 0.8) 71%, rgba(75,95,109,0.8) 86%);
+
+    background-image: -webkit-gradient(
+            linear,
+            left bottom,
+            left top,
+            color-stop(0.29, rgba(54,63,69,0.8)),
+            color-stop(0.71, rgba(75,95,109,0.8)),
+            color-stop(0.86, rgba(75,95,109,0.8))
+    );
+}
+
+#imagelistwrapper {
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+#imagelist {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 6000px;
+}
+
+#imagelist img {
+    height: 270px;
+    margin-right: 10px;
+    border: 5px solid rgba(0,0,0,0);
+    cursor: pointer;
+}
+
+#imagelist img:hover {
+    border: 5px solid rgba(254,180,28,0.5);
+}
+
+#imagelist img:active {
+    border: 5px solid white;
+}
+
+#previmages {
+    position: absolute;
+    left: 0px;
+    bottom: 0px;
+    margin: 0px;
+    border-bottom: 0px;
+    border-left: 0px;
+    border-radius: 0px;
+    border-top-right-radius: 10px;
+}
+
+#nextimages {
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+    margin: 0px;
+    border-bottom: 0px;
+    border-right: 0px;
+    border-radius: 0px;
+    border-top-left-radius: 10px;
+}
+
+#modeselector .button {
+    display: block;
+    float: left;
+}
+
+#modeselector .button ul {
+    display: none;
+}
+
+.button ul {
+    margin: 20px 0px 0px 0px;
+    padding: 0;
+    list-style-type: none;
+}
+
+.button ul li {
+    padding: 5px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.button ul li:hover {
+    background-color: rgba(254,180,28,0.4);
+}
+
+.slider {
+    margin: 20px 20px;
+}
+
+#maskbuttons {
+    position: absolute;
+    top: 140px;
+    left: 10px;
+    width: 80px;
+}
+
+#maskbuttons .button {
+    text-align: center;
+    width: 80px;
+}
+
+#brushsettings {
+    display: none;
+    position: absolute;
+    left: 150px;
+    top: 40px;
+    width: 300px;
+}
+
+#brushpreview {
+    display: none;
+    position: absolute;
+    width: 160px;
+    height: 160px;
+    top: -30px;
+}

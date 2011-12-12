@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Nokia WebCL image editor</title>
+        <link href='http://fonts.googleapis.com/css?family=Viga' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/jquery-ui-1.8.16.custom.css">
+        <script src="js/jquery-1.7.1.min.js"></script>
+        <script src="js/jquery-ui-1.8.16.custom.min.js"></script>
+        <script src="js/ui.js"></script>
+    </head>
+    <body>
+        <div id="canvas">
+
+        </div>
+
+        <section id="modeselector" style="display: block;">
+            <div class="button" id="menuColorize">
+                Colorize
+            </div>
+            <div class="button" id="menuEffects">
+                Effects
+                <ul>
+                    <li data-name="effect1">Effect 1</li>
+                    <li data-name="effect2">Effect 2</li>
+                    <li data-name="effect3">Effect 3</li>
+                    <li data-name="effect4">Effect 4</li>
+                </ul>
+            </div>
+            <div class="button" id="menuCrop">
+                Crop
+                <ul>
+                    <li data-name="4_3">4:3</li>
+                    <li data-name="16_9">16:9</li>
+                    <li data-name="free">Free</li>
+                </ul>
+            </div>
+            
+            <footer>
+                <div id="filemenubutton" class="button">File</div>
+
+                <div id="imagelistwrapper">
+                    <div id="imagelist">
+                        <img src="images/cuba.jpg" alt="" />
+                        <img src="images/dog.jpg" alt="" />
+                        <img src="images/dog2.jpg" alt="" />
+                        <img src="images/greenthing.jpg" alt="" />
+                        <img src="images/porsche.jpg" alt="" />
+                        <img src="images/redcar.jpg" alt="" />
+                        <img src="images/redcar2.jpg" alt="" />
+                    </div>
+                </div>
+
+                <div id="previmages" class="button">Prev</div>
+                <div id="nextimages" class="button">Next</div>
+            </footer>
+        </section>
+        
+        <section id="colorchanger">
+            <div class="button dialog">
+                <h1>Hue</h1>
+                <div id="hueslider" class="slider"></div>
+                
+                <h1>Saturation</h1>
+                <div id="saturationslider" class="slider"></div>
+                
+                <div style="float: right;">
+                    <div class="button red buttoncancel">CANCEL</div>
+                    <div class="button green buttonmaskdisplay">OK</div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="effectsdialog">
+            <div class="button dialog">
+                <h1>Effect name</h1>
+                
+                <div id="effectslider" class="slider"></div>
+                
+                <div style="float: right;">
+                    <div class="button red buttoncancel">CANCEL</div>
+                    <div class="button green buttonmaskdisplay">OK</div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="maskselection">
+            <div class="button" id="brushpreview">
+                <canvas id="brushsize" height="160" width="160">
+                    
+                </canvas>
+            </div>
+            
+            <div id="maskbuttons">
+                <div class="button" id="buttonBrush">
+                    Brush<br />
+                    Size
+                    <div id="brushsettings">
+                        <div id="brushsizeslider"></div>
+                    </div>
+                </div>
+                <div class="button" id="buttonInvertBrush">
+                    Invert<br />
+                    Brush
+                </div>
+                <div class="button" id="buttonInvertMask">
+                    Invert<br />
+                    Mask
+                </div>
+                <div class="button" id="buttonShowOriginal">
+                    Show<br />
+                    Original
+                </div>
+                
+                <div class="button green" style="margin-top: 40px;" id="buttonSave">
+                    Save
+                </div>
+                <div class="button red buttoncancel">
+                    Cancel
+                </div>
+            </div>
+        </section>
+        
+        <section id="cropselection">
+            <div class="button red buttoncancel">Cancel</div>
+            <div class="button green" id="savecrop">Save</div>
+        </section>
+    </body>
+</html>
