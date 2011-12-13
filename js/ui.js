@@ -1,6 +1,9 @@
 var footervisible = false;
 var brushsizectx = null;
+var brushctx = null;
 var invertbrush = false;
+var canvasdown = false;
+var maskdrawmode = false;
 
 var effects = {
     sharpen: {
@@ -144,6 +147,7 @@ $(document).ready(function() {
     $("#brushsizeslider").slider({
         min: 10,
         max: 80,
+        value: 20,
         start: function(event, ui) {
             drawBrush(ui.value);
             $("#brushpreview").fadeIn('fast');
@@ -162,11 +166,33 @@ $(document).ready(function() {
         }
     });
     
-    $("#canvas").click(function(event) {
-        console.log(event);
+    $("#canvas").mousedown(function(event) {
+        event.preventDefault();
+        
+        if (!maskdrawmode)
+            return;
+        
+        canvasdown = true;
+        $("#thebrush").show();
+    }).mousemove(function(event) {
+        event.preventDefault();
+        
+        if (!canvasdown)
+            return;
+        
+        $("#thebrush").css("left", event.pageX - 80);
+        $("#thebrush").css("top", event.pageY - 80);
+    }).mouseup(function(event) {
+        canvasdown = false;
+        $("#thebrush").hide();
+        event.preventDefault();
+    }).click(function(event) {
+        event.preventDefault();
     });
     
+    
     brushsizectx = document.getElementById("brushsize").getContext('2d');
+    brushctx = document.getElementById("thebrush").getContext('2d');
     drawBrush(20);
 });
 
@@ -187,6 +213,14 @@ function drawBrush(pixelsize) {
         brushsizectx.closePath();
         brushsizectx.fill();
     }
+    
+    
+    brushctx.clearRect(0,0,160,160);
+    brushctx.lineWidth = 4;
+    brushctx.strokeStyle = 'rgba(254,180,28,0.5)';
+    brushctx.beginPath();
+    brushctx.arc(80, 80, pixelsize, 0, Math.PI*2, true);
+    brushctx.stroke();
 }
 
 function showCropScreen(cropratio) {
@@ -203,6 +237,8 @@ function showEffectsScreen(effectName) {
     $("#effectsdialog").fadeIn();
     $("#maskselection").fadeIn();
     
+    maskdrawmode = true;
+    
     var min = eval("effects."+effectName+".minval");
     var max = eval("effects."+effectName+".maxval");
     
@@ -215,11 +251,14 @@ function showEffectsScreen(effectName) {
 function showMainScreen() {
     $("section").fadeOut();
     $("#modeselector").fadeIn();
+    maskdrawmode = false;
 }
 
 
 function showColorSelection() {
     resetViewSetings()
+    
+    maskdrawmode = true;
     
     $("section").fadeOut();
     $("#colorchanger").fadeIn();
