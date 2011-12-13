@@ -10,7 +10,7 @@
         <script src="js/jquery-ui-1.8.16.custom.min.js"></script>
         <script src="js/ui.js"></script>
     </head>
-    <body>
+    <body oncontextmenu="return false;">
         <div id="canvas">
 
         </div>
@@ -20,7 +20,7 @@
                 Colorize
             </div>
             <div class="button" id="menuEffects">
-                Effects
+                Effects ▼
                 <ul>
                     <li data-name="effect1">Effect 1</li>
                     <li data-name="effect2">Effect 2</li>
@@ -29,9 +29,10 @@
                 </ul>
             </div>
             <div class="button" id="menuCrop">
-                Crop
+                Crop ▼
                 <ul>
                     <li data-name="4_3">4:3</li>
+                    <li data-name="3_4">3:4</li>
                     <li data-name="16_9">16:9</li>
                     <li data-name="free">Free</li>
                 </ul>
@@ -52,8 +53,8 @@
                     </div>
                 </div>
 
-                <div id="previmages" class="button">Prev</div>
-                <div id="nextimages" class="button">Next</div>
+                <div id="previmages" class="button">◀</div>
+                <div id="nextimages" class="button">▶</div>
             </footer>
         </section>
         

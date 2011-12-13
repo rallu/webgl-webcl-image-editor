@@ -42,7 +42,7 @@ $(document).ready(function() {
         event.preventDefault();
     });
     
-    $("#modeselector .button").mousedown(function() {
+  $("#modeselector .button").mousedown(function(event) {
        $(this).find("ul").show(); 
     });
     
@@ -100,7 +100,9 @@ $(document).ready(function() {
             $("#brushpreview").css("left", offset.left - 90);
         },
         stop: function(event, ui) {
-            $("#brushpreview").fadeOut('fast');
+          $("#brushpreview").fadeOut('fast');
+          $("#brushsettings").fadeOut('fast');
+          $("#buttonBrush").removeClass('active');
         },
         slide: function(event, ui) {
             var offset = $("#brushsizeslider .ui-slider-handle").offset();
