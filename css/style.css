@@ -111,6 +111,14 @@ section {
 }
 
 .button.dialog {
+    margin-top: 0px;
+    border-top: 0px;
+    border-radius: 0px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    
+    z-index: 1000;
+    
     padding: 20px;
     
     background-image: linear-gradient(bottom, rgba(54,63,69, 0.4) 29%, rgba(75,95,109, 0.4) 71%, rgba(75,95,109,0.4) 86%);
@@ -130,8 +138,19 @@ section {
     
     position: absolute;
     left: 50%;
+    top: 0px;
     margin-left: -250px;
     width: 500px;
+}
+
+.hidedialog.button {
+    width: 530px;
+    position: absolute;
+    bottom: -40px;
+    padding: 5px;
+    margin: 0px;
+    left: 0px;
+    text-align: center;
 }
 
 .button.dialog h1 {

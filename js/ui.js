@@ -42,8 +42,24 @@ $(document).ready(function() {
         event.preventDefault();
     });
     
-  $("#modeselector .button").mousedown(function(event) {
-       $(this).find("ul").show(); 
+    $("#modeselector .button").mousedown(function(event) {
+        $(this).find("ul").show(); 
+    });
+    
+    $(".hidedialog").click(function() {
+        var top = parseInt($(this).parent().css("top"));
+        var pheight = $(this).parent().height() + 40;
+        if (top == 0) {
+            $(this).html("▼");
+            $(this).parent().animate({
+                top: -pheight
+            }, 500);
+        } else {
+            $(this).html("▲");
+            $(this).parent().animate({
+                top: 0
+            }, 500);
+        }
     });
     
     $("#modeselector").mouseup(function() {
@@ -61,10 +77,6 @@ $(document).ready(function() {
     
     $(".buttoncancel").click(function() {
         showMainScreen();
-    });
-    
-    $(".buttonmaskdisplay").click(function() {
-        showMaskSelection();
     });
     
     $("#menuColorize").mouseup(function() {
@@ -88,7 +100,7 @@ $(document).ready(function() {
     
     $("#buttonInvertMask").click(function() {
         
-    });
+        });
     
     $("#brushsizeslider").slider({
         min: 10,
@@ -100,9 +112,9 @@ $(document).ready(function() {
             $("#brushpreview").css("left", offset.left - 90);
         },
         stop: function(event, ui) {
-          $("#brushpreview").fadeOut('fast');
-          $("#brushsettings").fadeOut('fast');
-          $("#buttonBrush").removeClass('active');
+            $("#brushpreview").fadeOut('fast');
+            $("#brushsettings").fadeOut('fast');
+            $("#buttonBrush").removeClass('active');
         },
         slide: function(event, ui) {
             var offset = $("#brushsizeslider .ui-slider-handle").offset();
@@ -140,8 +152,14 @@ function showCropScreen(cropratio) {
 }
 
 function showEffectsScreen(effectName) {
+    $(".dialog").css("top", 0);
+    $(".hidedialog").html("▲");
+    $("#maskselection .active").removeClass("active");
+    invertbrush = false;
+    
     $("section").fadeOut();
     $("#effectsdialog").fadeIn();
+    $("#maskselection").fadeIn();
     $("#effectslider").slider();
 }
 
@@ -150,15 +168,16 @@ function showMainScreen() {
     $("#modeselector").fadeIn();
 }
 
-function showMaskSelection() {
-    $("section").fadeOut();
-    $("#maskselection").fadeIn();
-}
 
 function showColorSelection() {
+    $(".dialog").css("top", 0);
+    $(".hidedialog").html("▲")
+    $("#maskselection .active").removeClass("active");
+    invertbrush = false;
+    
     $("section").fadeOut();
     $("#colorchanger").fadeIn();
-    
+    $("#maskselection").fadeIn();
     $("#hueslider").slider();
     $("#saturationslider").slider();
 }
