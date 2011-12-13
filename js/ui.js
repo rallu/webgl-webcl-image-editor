@@ -172,6 +172,7 @@ $(document).ready(function() {
         if (!maskdrawmode)
             return;
         
+        $(".button").css("pointer-events", "none");
         canvasdown = true;
         $("#thebrush").show();
     }).mousemove(function(event) {
@@ -180,12 +181,13 @@ $(document).ready(function() {
         if (!canvasdown)
             return;
         
-        $("#thebrush").css("left", event.pageX - 80);
-        $("#thebrush").css("top", event.pageY - 80);
+        $("#thebrush").css("left", event.pageX - 85);
+        $("#thebrush").css("top", event.pageY - 85);
     }).mouseup(function(event) {
         canvasdown = false;
         $("#thebrush").hide();
         event.preventDefault();
+        $(".button").css("pointer-events", "auto");
     }).click(function(event) {
         event.preventDefault();
     });
@@ -215,11 +217,11 @@ function drawBrush(pixelsize) {
     }
     
     
-    brushctx.clearRect(0,0,160,160);
+    brushctx.clearRect(0,0,170,170);
     brushctx.lineWidth = 4;
     brushctx.strokeStyle = 'rgba(254,180,28,0.5)';
     brushctx.beginPath();
-    brushctx.arc(80, 80, pixelsize, 0, Math.PI*2, true);
+    brushctx.arc(85, 85, pixelsize, 0, Math.PI*2, true);
     brushctx.stroke();
 }
 
