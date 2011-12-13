@@ -184,11 +184,7 @@ function showCropScreen(cropratio) {
 }
 
 function showEffectsScreen(effectName) {
-    $(".dialog").css("top", 0);
-    $(".hidedialog").html("▲");
-    $("#maskselection .active").removeClass("active");
-    invertbrush = false;
-    
+    resetViewSetings()
     
     $("#effectsdialog h1").html(eval("effects."+effectName+".name"));
     
@@ -212,14 +208,20 @@ function showMainScreen() {
 
 
 function showColorSelection() {
-    $(".dialog").css("top", 0);
-    $(".hidedialog").html("▲")
-    $("#maskselection .active").removeClass("active");
-    invertbrush = false;
+    resetViewSetings()
     
     $("section").fadeOut();
     $("#colorchanger").fadeIn();
     $("#maskselection").fadeIn();
     $("#hueslider").slider();
     $("#saturationslider").slider();
+}
+
+function resetViewSetings() {
+    $(".dialog").css("top", 0);
+    $(".hidedialog").html("▲");
+    $("#brushpreview").hide();
+    $("#brushsettings").hide();
+    $("#maskbuttons .active").removeClass("active");
+    invertbrush = false;
 }

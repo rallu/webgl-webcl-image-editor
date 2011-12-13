@@ -79,6 +79,10 @@ section {
     user-select: none;
 }
 
+.button:active {
+    border: 1px solid rgba(255,255,255,0.6);
+}
+
 .button.active, .button.active:hover {
     background-image: -linear-gradient(bottom, rgb(89,113,130) 29%, rgb(112,132,143) 71%);
     background-image: -o-linear-gradient(bottom, rgb(89,113,130) 29%, rgb(112,132,143) 71%);
@@ -156,20 +160,25 @@ section {
     margin-top: 0px;
     border-top: 0px;
     border-radius: 0px;
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
-    
-    
+    cursor: auto;
+}
+
+.button.dialog:active {
+    border: 1px solid rgba(254,180,28,0.5);
+    border-top: 0px;
 }
 
 .hidedialog.button {
     width: 530px;
     position: absolute;
-    bottom: -40px;
+    bottom: -47px;
     padding: 5px;
     margin: 0px;
-    left: 0px;
+    left: -1px;
     text-align: center;
+    border-radius: 0px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
 }
 
 .button.dialog h1 {
@@ -393,6 +402,21 @@ footer {
     width: 160px;
     height: 160px;
     top: -30px;
+    
+    background-image: linear-gradient(bottom, rgb(54,63,69) 29%, rgb(75,95,109) 71%, rgb(75,95,109) 86%) !important;
+    background-image: -o-linear-gradient(bottom, rgb(54,63,69) 29%, rgb(75,95,109) 71%, rgb(75,95,109) 86%) !important;
+    background-image: -moz-linear-gradient(bottom, rgb(54,63,69) 29%, rgb(75,95,109) 71%, rgb(75,95,109) 86%) !important;
+    background-image: -webkit-linear-gradient(bottom, rgb(54,63,69) 29%, rgb(75,95,109) 71%, rgb(75,95,109) 86%) !important;
+    background-image: -ms-linear-gradient(bottom, rgb(54,63,69) 29%, rgb(75,95,109) 71%, rgb(75,95,109) 86%) !important;
+
+    background-image: -webkit-gradient(
+            linear,
+            left bottom,
+            left top,
+            color-stop(0.29, rgb(54,63,69)),
+            olor-stop(0.71, rgb(75,95,109)),
+            color-stop(0.86, rgb(75,95,109))
+    ) !important;
 }
 
 #cropselectionbuttons {
