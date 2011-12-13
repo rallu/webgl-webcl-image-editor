@@ -2,6 +2,34 @@ var footervisible = false;
 var brushsizectx = null;
 var invertbrush = false;
 
+var effects = {
+    sharpen: {
+        name: "Sharpen",
+        minval: 0,
+        maxval: 100
+    },
+    blur: {
+        name: "Blur",
+        minval: 0,
+        maxval: 100
+    },
+    findedges: {
+        name: "Find edges",
+        minval: 0,
+        maxval: 100
+    },
+    effect3: {
+        name: "Effect 3",
+        minval: 0,
+        maxval: 100
+    },
+    effect4: {
+        name: "Effect 4",
+        minval: 0,
+        maxval: 100
+    }
+}
+
 $(document).ready(function() {
     $("#filemenubutton").click(function(event) {
         if (footervisible) {
@@ -123,6 +151,10 @@ $(document).ready(function() {
         }
     });
     
+    $("#canvas").click(function(event) {
+        console.log(event);
+    });
+    
     brushsizectx = document.getElementById("brushsize").getContext('2d');
     drawBrush(20);
 });
@@ -157,10 +189,20 @@ function showEffectsScreen(effectName) {
     $("#maskselection .active").removeClass("active");
     invertbrush = false;
     
+    
+    $("#effectsdialog h1").html(eval("effects."+effectName+".name"));
+    
     $("section").fadeOut();
     $("#effectsdialog").fadeIn();
     $("#maskselection").fadeIn();
-    $("#effectslider").slider();
+    
+    var min = eval("effects."+effectName+".minval");
+    var max = eval("effects."+effectName+".maxval");
+    
+    $("#effectslider").slider({
+        min: min,
+        max: max
+    });
 }
 
 function showMainScreen() {
