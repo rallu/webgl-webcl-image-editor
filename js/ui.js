@@ -46,7 +46,18 @@ $(document).ready(function() {
     });
     
     $("#imagelist img").click(function(event) {
-        $("#canvas").css("backgroundImage", "url("+$(this).attr("src")+")");
+        var img = new Image();
+        $("#canvas").css("backgroundImage", "none");
+        $("#spinner").show();
+        $(img).load(function() {
+            $("#canvas").css("backgroundImage", "url("+img.src+")");
+            $("#spinner").fadeOut('slow');
+        });
+        var datahref = $(this).attr("data-href");
+        setTimeout(function() {
+            img.src = datahref;
+        }, 1000);
+        
         $("#filemenubutton").click();
         event.preventDefault();
     });
@@ -90,7 +101,7 @@ $(document).ready(function() {
         }
     });
     
-    $("#modeselector").mouseup(function() {
+    $("body").mouseup(function() {
         $("#modeselector .button ul").hide();
     });
     

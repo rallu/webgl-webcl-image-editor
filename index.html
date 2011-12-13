@@ -11,6 +11,7 @@
         <script src="js/ui.js"></script>
     </head>
     <body oncontextmenu="return false;">
+        
         <div id="canvas">
 
         </div>
@@ -45,13 +46,13 @@
 
                 <div id="imagelistwrapper">
                     <div id="imagelist">
-                        <img src="images/cuba.jpg" alt="" />
-                        <img src="images/dog.jpg" alt="" />
-                        <img src="images/dog2.jpg" alt="" />
-                        <img src="images/greenthing.jpg" alt="" />
-                        <img src="images/porsche.jpg" alt="" />
-                        <img src="images/redcar.jpg" alt="" />
-                        <img src="images/redcar2.jpg" alt="" />
+                        <img data-href="images/cuba.jpg" src="images/cuba_thumb.jpg" alt="" />
+                        <img data-href="images/dog.jpg" src="images/dog_thumb.jpg" alt="" />
+                        <img data-href="images/dog2.jpg" src="images/dog2_thumb.jpg" alt="" />
+                        <img data-href="images/greenthing.jpg" src="images/greenthing_thumb.jpg" alt="" />
+                        <img data-href="images/porsche.jpg" src="images/porsche_thumb.jpg" alt="" />
+                        <img data-href="images/redcar.jpg" src="images/redcar_thumb.jpg" alt="" />
+                        <img data-href="images/redcar2.jpg" src="images/redcar2_thumb.jpg" alt="" />
                     </div>
                 </div>
 
@@ -125,5 +126,7 @@
                 <div class="button green" id="savecrop">Save</div>
             </div>
         </section>
+        
+        <img id="spinner" src="spinner.png" alt="" />
     </body>
 </html>

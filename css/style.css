@@ -23,8 +23,17 @@ body {
     overflow: hidden;
 }
 
-#canvas {
-    
+#spinner {
+    display: none;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -64px;
+    margin-top: -64px;
+}
+
+#canvas {    
+    position: absolute;
     top: 0px;
     left: 0px;
     height: 100%;
