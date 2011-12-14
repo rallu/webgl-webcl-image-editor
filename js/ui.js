@@ -34,6 +34,7 @@ var effects = {
 }
 
 $(document).ready(function() {
+
     $("#filemenubutton").click(function(event) {
         if (footervisible) {
             $("footer").animate({
@@ -53,8 +54,9 @@ $(document).ready(function() {
         $("#canvas").css("backgroundImage", "none");
         $("#spinner").show();
         $(img).load(function() {
-            $("#canvas").css("backgroundImage", "url("+img.src+")");
+            //$("#canvas").css("backgroundImage", "url("+img.src+")");
             $("#spinner").fadeOut('slow');
+            Editor.setupImage(img);
         });
         var datahref = $(this).attr("data-href");
         setTimeout(function() {
@@ -231,7 +233,7 @@ function showCropScreen(cropratio) {
 }
 
 function showEffectsScreen(effectName) {
-    resetViewSetings()
+    resetViewSettings()
     
     $("#effectsdialog h1").html(eval("effects."+effectName+".name"));
     
@@ -258,7 +260,7 @@ function showMainScreen() {
 
 
 function showColorSelection() {
-    resetViewSetings()
+    resetViewSettings();
     
     maskdrawmode = true;
     
@@ -269,7 +271,7 @@ function showColorSelection() {
     $("#saturationslider").slider();
 }
 
-function resetViewSetings() {
+function resetViewSettings() {
     $(".dialog").css("top", 0);
     $(".hidedialog").html("▲");
     $("#brushpreview").hide();
