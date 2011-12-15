@@ -26,6 +26,12 @@ Texture = function (gl) {
 
   var GL = window.WebGLRenderingContext;
 
+  ///////////////////////////////////////////////////////////////////////////////////////
+  //
+  // Public interface
+  //
+  ///////////////////////////////////////////////////////////////////////////////////////
+
   var API = {
     texture : undefined,   // the GL texture object
     width : 0,
@@ -48,6 +54,12 @@ Texture = function (gl) {
     }
   };
 
+  ///////////////////////////////////////////////////////////////////////////////////////
+  //
+  // Private implementation
+  //
+  ///////////////////////////////////////////////////////////////////////////////////////
+
   return construct(gl);
 
   function construct(gl) {
@@ -64,14 +76,21 @@ Texture = function (gl) {
 };
 
 /**
- * WebGL shader program abstraction. A Shader object is constructed by
- * loading its source code from the given URI. The shader can be
- * compiled and linked later, when a WebGL context is available.
+ * Creates a new Shader object. A Shader is constructed by loading its
+ * source code from the given URI. If the type of shader is not given,
+ * it is autodetected from the source code.  The shader can be
+ * compiled and linked later when a WebGl context is available.
  */
 
 Shader = function (uri, type) {
 
   var GL = window.WebGLRenderingContext;
+
+  ///////////////////////////////////////////////////////////////////////////////////////
+  //
+  // Public interface
+  //
+  ///////////////////////////////////////////////////////////////////////////////////////
 
   var API = {
     uri : uri,               // URI to the shader source code
@@ -83,6 +102,13 @@ Shader = function (uri, type) {
     compiled : false,        // 'true' if compiled successfully
     linked : false,          // 'true' if linked successfully
   };
+
+  /**
+   * Compiles this Shader.
+   *
+   * @param {WebGLRenderingContext} gl the GL context to use
+   * @return {Boolean} 'true' if compilation succeeded, 'false' if not
+   */
 
   API.compile = function compile (gl) {
     if (!API.compiled && API.source) {
@@ -97,6 +123,14 @@ Shader = function (uri, type) {
     return API.compiled;
   };
 
+  /**
+   * Links this Shader with the given vertex or fragment shader. Both
+   * shaders must be already compiled.
+   *
+   * @param {WebGLRenderingContext} gl the GL context to use
+   * @param {Shader} shaderToLinkWith the other shader to link
+   * @return {Boolean} 'true' if linking succeeded, 'false' if not
+   */
   API.link = function link (gl, shaderToLinkWith) {
     if (!API.linked && API.compiled && shaderToLinkWith.compiled) {
       API.program = gl.createProgram();
@@ -119,26 +153,45 @@ Shader = function (uri, type) {
     return API.linked;
   };
 
+  /**
+   * Compiles this shader and the given other shader, and links them
+   * together into a complete shader program. This shader must be a
+   * vertex shader and the other a fragment shader, or vice versa.
+   *
+   * @param {WebGLRenderingContext} gl the GL context to use
+   * @param {Shader} shaderToLinkWith the other shader to build
+   * @return {Boolean} 'true' if build succeeded, 'false' if not
+   */
   API.build = function build (gl, shaderToLinkWith) {
     var success = shaderToLinkWith.compile(gl) && API.compile(gl) && API.link(gl, shaderToLinkWith);
     return success;
   };
+
+  ///////////////////////////////////////////////////////////////////////////////////////
+  //
+  // Private implementation
+  //
+  ///////////////////////////////////////////////////////////////////////////////////////
 
   return construct(uri, type);
 
   /**
    * Constructs a new Shader object from the given URI and type. Does
    * not automatically compile or link the shader, because there is no
-   * GL context available at this time.
+   * GL context available at this time. If the type of shader is not
+   * given, it is autodetected from source code by scanning for the
+   * string "gl_Position".
    * 
-   * @return {Shader} a new Shader object, or 'undefined' in case of failure
+   * @param {String} uri a URI to load the shader source code from
+   * @param {GLenum} type [optional] GL.VERTEX_SHADER or GL.FRAGMENT_SHADER
+   *
+   * @return {Shader} a new Shader object
    */
   function construct(uri, type) {
-    API.source = loadSource(uri);
-    API.type = type ? type : GL.FRAGMENT_SHADER;
-    if (API.source === null) {
-      console.log("  failed to load shader", uri);
-    }
+    var source = loadSource(uri);
+    var isVS = (!type && source && source.indexOf("gl_Position") !== -1);
+    API.type = type || (isVS ? GL.VERTEX_SHADER : GL.FRAGMENT_SHADER);
+    API.source = source;
     return API;
   };
 
@@ -208,12 +261,6 @@ Shader = function (uri, type) {
 
 var glimr = (function() {
 
-  ///////////////////////////////////////////////////////////////////////////////////////
-  //
-  // Global private variables
-  //
-  ///////////////////////////////////////////////////////////////////////////////////////
-
   var GL = window.WebGLRenderingContext;
 
   ///////////////////////////////////////////////////////////////////////////////////////
@@ -229,20 +276,8 @@ var glimr = (function() {
     'ready'    : false,
   };
 
-  ///////////////////////////////////////////////////////////////////////////////////////
-  //
-  // Public variable initialization
-  //
-  ///////////////////////////////////////////////////////////////////////////////////////
-
-  API.shaders['vertexshader'] = new Shader("./vertexshader.gl", GL.VERTEX_SHADER);
-  API.shaders['fragmentshader'] = new Shader("./fragmentshader.gl", GL.FRAGMENT_SHADER);
-
-  ///////////////////////////////////////////////////////////////////////////////////////
-  //
-  // Public functions
-  //
-  ///////////////////////////////////////////////////////////////////////////////////////
+  API.shaders['vertexshader'] = new Shader("./vertexshader.gl");
+  API.shaders['fragmentshader'] = new Shader("./fragmentshader.gl");
 
   API.setReadyState = function setReadyState (readyState) {
     API.ready = readyState;
@@ -311,7 +346,7 @@ var glimr = (function() {
 
   ///////////////////////////////////////////////////////////////////////////////////////
   //
-  // Private functions & variables
+  // Private implementation
   //
   ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -465,7 +500,8 @@ var glimr = (function() {
   console.log("GL context for", canvas, ":", gl);
 
   var success = glimr.shaders.fragmentshader.build(gl, glimr.shaders.vertexshader);
-  console.log("Successfully compiled and linked", glimr.shaders.fragmentshader);
+  if (!success) 
+    console.log("Failed to compile and link", glimr.shaders.fragmentshader);
   
   glimr.setReadyState(true);
 

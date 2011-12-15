@@ -33,10 +33,10 @@ Editor = (function() {
     var gl = API.gl;
     var canvas = API.canvas;
     console.log("previous canvas size:", canvas.width, canvas.height);
-    console.log("new canvas size:", image.width, image.height);
-    canvas.width = image.width;
-    canvas.height = image.height;
-    gl.viewport(0, 0, image.width, image.height);
+    console.log("new canvas size:", $(window).width(), $(window).height());
+    canvas.width = $(window).width();
+    canvas.height = $(window).height();
+    gl.viewport(0, 0, canvas.width, canvas.height);
 
     glimr.textures.original.texImage2D(gl, gl.RGB, true, image);
     glimr.textures.filtered.texImage2D(gl, gl.RGB, true, image);

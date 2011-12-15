@@ -36,12 +36,12 @@ body {
     position: absolute;
     top: 0px;
     left: 0px;
-    height: 100%;
+    height: auto;
     width: 100%;
-    background-image: url("../images/redcar.jpg");
+    /*background-image: url("../images/redcar.jpg");
     background-size: contain;
     background-repeat: no-repeat;
-    background-position: center center;
+    background-position: center center;*/
 }
 
 section {
