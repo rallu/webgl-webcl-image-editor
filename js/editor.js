@@ -15,9 +15,14 @@
 
 Editor = (function() {
 
+  var GL = WebGLRenderingContext;
+
   API = {
     canvas : null,
     gl : null,
+    viewport : {},
+    imageWidth : 0,
+    imageHeight : 0,
   };
 
   API.setup = function setup (canvas) {
@@ -27,6 +32,10 @@ Editor = (function() {
     glimr.textures.filtered = new Texture(gl);
     glimr.textures.mask = new Texture(gl);
     glimr.textures.result = new Texture(gl);
+    API.viewport.topx = 0;
+    API.viewport.topy = 0;
+    API.viewport.width = 0;
+    API.viewport.height = 0;
   }
 
   API.setupImage = function setupImage (image) {
@@ -36,7 +45,9 @@ Editor = (function() {
     console.log("new canvas size:", $(window).width(), $(window).height());
     canvas.width = $(window).width();
     canvas.height = $(window).height();
-    gl.viewport(0, 0, canvas.width, canvas.height);
+    API.imageWidth = image.width;
+    API.imageHeight = image.height;
+    API.setupViewport(canvas);
 
     glimr.textures.original.texImage2D(gl, gl.RGB, true, image);
     glimr.textures.filtered.texImage2D(gl, gl.RGB, true, image);
@@ -49,15 +60,59 @@ Editor = (function() {
     API.renderOriginal();
   };
 
+  API.setupViewport = function setupViewport (canvas) {
+
+    var vp = API.viewport;
+    var imageWidth = API.imageWidth;
+    var imageHeight = API.imageHeight;
+    var imageAspectRatio = imageWidth / imageHeight;
+    var canvasAspectRatio = canvas.width / canvas.height;
+
+    // Set the width and height of the viewport so as to maximize its
+    // area while matching the aspect ratio of the image
+
+    if (imageAspectRatio > canvasAspectRatio) {  
+
+      // The image is "more widescreen" than the canvas, so set the
+      // viewport width to max, then rescale height; this leaves an
+      // empty border at the top and bottom edges.
+      
+      vp.width = canvas.width;
+      vp.height = Math.round(canvas.width / imageAspectRatio);
+      vp.topy = Math.round((canvas.height - vp.height) / 2);
+      vp.topx = 0;
+
+    } else { 
+
+      // The image is "less widescreen" than the window, so set the
+      // viewport height to max, then rescale width; this leaves an
+      // empty border at the left and right edges.
+      
+      vp.height = canvas.height;
+      vp.width = Math.round(canvas.height * imageAspectRatio);
+      vp.topx = Math.round((canvas.width - vp.width) / 2);
+      vp.topy = 0;
+    }
+
+    gl.viewport(vp.topx, vp.topy, vp.width, vp.height);
+
+    console.log("Editor.setupViewport:");
+    console.log("  image width/height = ", imageWidth, imageHeight);
+    console.log("  canvas width/height = ", canvas.width, canvas.height);
+    console.log("  viewport width/height = ", vp.width, vp.height); 
+    console.log("  viewport x/y = ", vp.topx, vp.topy);
+ };
+
   API.renderOriginal = function renderOriginal () {
-    var gl = API.gl;
 
     var uniforms = {
-      'resolution' : [API.canvas.width, API.canvas.height],
+      'viewport' : [API.viewport.topx, API.viewport.topy, API.viewport.width, API.viewport.height],
       'src' : glimr.textures.original,
     };
-    console.log("renderOriginal, resolution = ", uniforms.resolution);
+    console.log("renderOriginal, viewport = ", uniforms.viewport);
 
+    var gl = API.gl;
+    gl.clear(GL.COLOR_BUFFER_BIT);
     glimr.render(gl, 'fragmentshader', 'original', uniforms);
   };
 

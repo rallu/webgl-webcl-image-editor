@@ -34,8 +34,11 @@ var effects = {
 }
 
 $(window).bind('resize', function() {
-  var canvasCSS = $("#canvas");
-  //$.resizeCanvasCSS();
+  var canvas = $("#canvas")[0];
+  canvas.width = $(window).width();
+  canvas.height = $(window).height();
+  Editor.setupViewport(canvas);
+  Editor.renderOriginal();
 });
 
 $(document).ready(function() {
@@ -284,49 +287,3 @@ function resetViewSettings() {
     $("#maskbuttons .active").removeClass("active");
     invertbrush = false;
 }
-
-/**
- * Sets the CSS width and height of the canvas according to the
- * following rules: 1) Keep the entire image visible; 2) Retain
- * the original aspect ratio of the image; 3) Maximize the screen
- * size of the image.
- */
-$.resizeCanvasCSS = function(cssCanvas) {
-
-  var screenCanvas = cssCanvas;           // CSS (jQuery) representation of the canvas (scaled)
-  var imageCanvas = cssCanvas[0];         // the HTML DOM canvas element (actual framebuffer)
-  var imageWidth = imageCanvas.width;
-  var imageHeight = imageCanvas.height;
-  var windowWidth = $(window).width();
-  var windowHeight = $(window).height();
-  var imageAspectRatio = imageCanvas.width / imageCanvas.height;
-  var windowAspectRatio = windowWidth / windowHeight;
-
-  // Set the CSS width and height of the canvas so as to maximize its
-  // size, while retaining original aspect ratio.
-
-  if (imageAspectRatio > windowAspectRatio) {  
-
-    // The image is "more widescreen" than the window,
-    // so set the CSS width first, then rescale height;
-    // this leaves an empty border at the bottom.
-    
-    screenCanvas.width(windowWidth);
-    screenCanvas.height(Math.round(windowWidth / imageAspectRatio));
-
-  } else { 
-
-    // The image is "less widescreen" than the window,
-    // so set the CSS height first, then rescale width;
-    // this leaves an empty border at the right edge.
-    
-    screenCanvas.height(windowHeight);
-    screenCanvas.width(Math.round(windowHeight * imageAspectRatio));
-  }
-
-  console.log("resizeCanvasCSS:");
-  console.log("  image width/height = ", imageWidth, imageHeight);
-  console.log("  window width/height = ", windowWidth, windowHeight);
-  console.log("  CSS width/height = ", screenCanvas.width(), screenCanvas.height());
-};
-
