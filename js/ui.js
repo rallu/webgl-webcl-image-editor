@@ -293,7 +293,7 @@ var  UI = {
     initBrush: function() {
         this.brushsizectx = document.getElementById("brushsize").getContext('2d');
         this.brushctx = document.getElementById("thebrush").getContext('2d');
-        drawBrush(20);
+        this.drawBrush(20);
     },
 
     /**
