@@ -1,0 +1,37 @@
+/**
+ * Default fragment shader. Renders the given texture to fill the
+ * given viewport. The texture and the viewport should have the
+ * same aspect ratio, otherwise the image will appear stretched.
+ *
+ * @param {uniform vec4} viewport viewport origin in .xy and size in .zw
+ * @param {uniform sampler2D} src the texture to render
+ *
+ * @author Tomi Aarnio, Nokia Research Tampere, 2011
+ */
+
+precision mediump float;
+
+varying vec2 texcoords;
+
+//uniform vec4 viewport;
+uniform sampler2D src;
+
+void main(void)
+{
+  // BROWSER BUG WORKAROUND: There is a bug in ANGLE that causes Firefox
+  // and Chrome on Windows to provide erroneous values for gl_FragCoord.y
+  // in cases where the canvas origin and viewport origin do not align in
+  // the vertical direction. More precisely, gl_FragCoord.y values should
+  // start from zero at the top regardless of the viewport, but in ANGLE,
+  // they start instead from -viewport.y, where viewport.y is the Y origin
+  // of the viewport.
+  // 
+
+  //vec4 viewport = viewport;  // redeclare as local variable
+  //viewport.y = -viewport.y;  // flip y to work around the ANGLE bug
+  
+  // Scale the texture so that it fills the given viewport
+
+  //vec2 tc = vpFragCoord.xy / viewport.zw;
+  gl_FragColor = texture2D(src, texcoords);
+}

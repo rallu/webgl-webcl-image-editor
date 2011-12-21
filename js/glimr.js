@@ -33,7 +33,7 @@ Texture = function (gl) {
   ///////////////////////////////////////////////////////////////////////////////////////
 
   var API = {
-    texture : undefined,   // the GL texture object
+    gltexture : undefined,   // the GL texture object
     width : 0,
     height : 0,
     format : 0,
@@ -44,7 +44,7 @@ Texture = function (gl) {
       API.format = format;
       API.width = image.width;
       API.height = image.height;
-      gl.bindTexture(GL.TEXTURE_2D, API.texture);
+      gl.bindTexture(GL.TEXTURE_2D, API.gltexture);
       gl.pixelStorei(GL.UNPACK_FLIP_Y_WEBGL, flipY);
       gl.texImage2D(GL.TEXTURE_2D, 0, format, format, GL.UNSIGNED_BYTE, image);
       gl.bindTexture(GL.TEXTURE_2D, null);
@@ -63,8 +63,8 @@ Texture = function (gl) {
   return construct(gl);
 
   function construct(gl) {
-    API.texture = gl.createTexture();
-    gl.bindTexture(GL.TEXTURE_2D, API.texture);
+    API.gltexture = gl.createTexture();
+    gl.bindTexture(GL.TEXTURE_2D, API.gltexture);
     gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST);
     gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST);
     gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE);
@@ -276,8 +276,8 @@ var glimr = (function() {
     'ready'    : false,
   };
 
-  API.shaders['vertexshader'] = new Shader("./vertexshader.gl");
-  API.shaders['fragmentshader'] = new Shader("./fragmentshader.gl");
+  API.shaders['vertexshader'] = new Shader("./shaders/vertexshader.gl");
+  API.shaders['fragmentshader'] = new Shader("./shaders/fragmentshader.gl");
 
   API.setReadyState = function setReadyState (readyState) {
     API.ready = readyState;
@@ -322,21 +322,21 @@ var glimr = (function() {
     return;
   };
 
-  API.render = function render (gl, fsname, texturename, uniforms) {
+  API.render = function render (gl, fsname, texture, uniforms) {
     var program = API.shaders[fsname].program;
-    var texture = API.textures[texturename].texture;
-    if (!program || !texture) return;
+    var gltexture = texture.gltexture;
+    if (!program || !gltexture) return;
 
     gl.useProgram(program);
     for (var uname in uniforms) {
       var uniform = uniforms[uname];
-      if (uniform.texture instanceof WebGLTexture) {
+      if (uniform.gltexture instanceof WebGLTexture) {
         setUniformi(gl, program, uname, 0); 
       } else {
         setUniformf(gl, program, uname, uniform);
       }
     }
-    bindTextures(gl, texture);
+    bindTextures(gl, gltexture);
     bindDefaultGeometry(gl);
     drawRect(gl);
     return;

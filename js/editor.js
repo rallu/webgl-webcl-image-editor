@@ -57,7 +57,7 @@ Editor = (function() {
     console.log("Created a new texture:", glimr.textures.filtered);
     console.log("Created a new texture:", glimr.textures.mask);
     console.log("Created a new texture:", glimr.textures.result);
-    API.renderOriginal();
+    API.render(glimr.textures.original);
   };
 
   API.setupViewport = function setupViewport (canvas) {
@@ -103,17 +103,17 @@ Editor = (function() {
     console.log("  viewport x/y = ", vp.topx, vp.topy);
  };
 
-  API.renderOriginal = function renderOriginal () {
+  API.render = function render (texture) {
 
     var uniforms = {
-      'viewport' : [API.viewport.topx, API.viewport.topy, API.viewport.width, API.viewport.height],
-      'src' : glimr.textures.original,
+      //'viewport' : [API.viewport.topx, API.viewport.topy, API.viewport.width, API.viewport.height],
+      'src' : texture,
     };
-    console.log("renderOriginal, viewport = ", uniforms.viewport);
+    console.log("render, viewport = ", uniforms.viewport);
 
     var gl = API.gl;
     gl.clear(GL.COLOR_BUFFER_BIT);
-    glimr.render(gl, 'fragmentshader', 'original', uniforms);
+    glimr.render(gl, 'fragmentshader', texture, uniforms);
   };
 
   return API;
