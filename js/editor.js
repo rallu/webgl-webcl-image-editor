@@ -104,6 +104,10 @@ Editor = (function() {
  };
 
   API.render = function render (texture) {
+    
+    if (!texture) {
+      texture = glimr.textures.original;
+    }
 
     var uniforms = {
       //'viewport' : [API.viewport.topx, API.viewport.topy, API.viewport.width, API.viewport.height],

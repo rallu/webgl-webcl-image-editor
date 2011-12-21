@@ -77,7 +77,7 @@ var  UI = {
           canvas.width = $(window).width();
           canvas.height = $(window).height();
           Editor.setupViewport(canvas);
-          Editor.renderOriginal();
+          Editor.render();
         });
         
         /**
