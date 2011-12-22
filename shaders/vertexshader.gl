@@ -2,7 +2,9 @@
  * Default vertex shader. Simply passes the given X, Y coordinates
  * through to the fragment shader, leaving the Z coordinate zero.
  *
- * @param {uniform vec2} position
+ * @param {attribute vec2} position
+ * @param {uniform vec4} zoom
+ * @return {varying vec2} texcoords
  *
  * @copyright Tomi Aarnio, Nokia Research Tampere, 2011
  */
@@ -11,12 +13,12 @@ attribute vec2 position;
 
 varying vec2 texcoords;
 
+uniform vec4 zoom;
+
 void main()
 {
-  vec4 zoom = vec4(0.0, 0.0, 1.0, 1.0);
-  
   gl_Position = vec4(position, 0.0, 1.0);
 
-  texcoords.x = position.x < 0.0 ? zoom.x : zoom.z;
-  texcoords.y = position.y < 0.0 ? zoom.y : zoom.w;
+  texcoords.x = position.x < 0.0 ? zoom.x : zoom.y;
+  texcoords.y = position.y < 0.0 ? zoom.z : zoom.w;
 }
