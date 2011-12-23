@@ -26,8 +26,8 @@ var  UI = {
   // can brush be drawn top of canvas
   maskdrawmode: false,
 
-  // are we zoomed in or not (TODO: make this a slider)
-  zoomed: false,
+  // zoom window width relative to full image width
+  zoomwidth: 1.0, 
 
   //effect values
   effects: {
@@ -87,11 +87,12 @@ var  UI = {
     /**
      * Zoom in/out
      */
-    $("#canvas").bind('click', function() {
+    $("#canvas").bind('mousewheel', function(event, delta) {
       var canvas = $("#canvas")[0];
-      $this.zoomed = !($this.zoomed);
-      var zoomFunc = $this.zoomed ? Editor.zoom : Editor.setupViewport;
-      zoomFunc(canvas);
+      var dir = delta > 0 ? 'In' : 'Out';
+      var vel = Math.abs(delta);
+      $this.zoomwidth *= (1.0 - 0.1*delta);
+      Editor.zoom(canvas, $this.zoomwidth);
       Editor.render();
     });
     
@@ -122,6 +123,7 @@ var  UI = {
       $(img).load(function() {
         //$("#canvas").css("backgroundImage", "url("+img.src+")");
         $("#spinner").fadeOut('slow');
+        $this.zoomwidth = 1.0;
         Editor.setupImage(img);
       });
       var datahref = $(this).attr("data-href");

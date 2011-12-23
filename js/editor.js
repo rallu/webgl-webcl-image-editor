@@ -109,53 +109,43 @@ Editor = (function() {
 
   /**
    * Zoom towards the center of the image, such that the entire canvas
-   * is filled with pixels. Discard pixel rows or columns depending on
-   * the aspect ratio.
+   * gets filled with pixels. Zooming is achieved by extending the GL
+   * viewport beyond the canvas borders; the maximum zoom is dictated
+   * by the maximum viewport size allowed by each WebGL implementation.
+   *
+   * NOTE: Due to a known bug in ANGLE, extending the viewport does not
+   * work on Firefox and Chrome on Windows. TODO: find out when the bug
+   * is going to get fixed, create a workaround if necessary.
+   *
+   * @param {Number} zoomFactor zoom area size relative to whole image
    */
-  API.zoom = function zoom (canvas) {
+
+  API.zoom = function zoom (canvas, zoomFactor) {
 
     var imageWidth = API.imageWidth;
     var imageHeight = API.imageHeight;
     var imageAspectRatio = imageWidth / imageHeight;
     var canvasAspectRatio = canvas.width / canvas.height;
-    var zoom = API.zoomWindow;
-
-    // Make the viewport fill the entire canvas
-
     var vp = API.viewport;
-    vp.topx = 0;
-    vp.topy = 0;
-    vp.width = canvas.width;
-    vp.height = canvas.height;
-    gl.viewport(vp.topx, vp.topy, vp.width, vp.height);
 
-    if (imageAspectRatio > canvasAspectRatio) {  
-
-      // The image is "more widescreen" than the canvas, so we show
-      // the full image in the Y direction and clip from the left and
-      // right.
-      
-      zoom.topy = 0;
-      zoom.height = imageHeight;
-      zoom.width = Math.round(imageHeight * canvasAspectRatio);
-      zoom.topx = Math.round((imageWidth - zoom.width) / 2);
-
+    if (canvasAspectRatio > imageAspectRatio) {
+      vp.height = Math.min(canvas.height / zoomFactor, glimr.caps.MAX_VIEWPORT_DIMS[1]);
+      vp.width = Math.min(vp.height * imageAspectRatio, glimr.caps.MAX_VIEWPORT_DIMS[0]);
+      vp.height = vp.width / imageAspectRatio;
     } else {
-
-      // The image is "less widescreen" than the canvas, so we show
-      // the full image in the X direction and clip from the top and
-      // bottom.
-
-      zoom.topx = 0;
-      zoom.width = imageWidth;
-      zoom.height = Math.round(imageWidth / canvasAspectRatio);
-      zoom.topy = Math.round((imageHeight - zoom.height) / 2);
+      vp.width = Math.min(canvas.width / zoomFactor, glimr.caps.MAX_VIEWPORT_DIMS[0]);
+      vp.height = Math.min(vp.width / imageAspectRatio, glimr.caps.MAX_VIEWPORT_DIMS[1]);
+      vp.width = vp.height * imageAspectRatio;
     }
 
-    console.log("Editor.zoom:");
+    vp.topx = (canvas.width - vp.width) / 2;
+    vp.topy = (canvas.height - vp.height) / 2;
+
+    gl.viewport(vp.topx, vp.topy, vp.width, vp.height);
+
+    console.log("Editor.zoom (factor =", zoomFactor, "):");
     console.log("  image width/height = ", imageWidth, imageHeight);
     console.log("  viewport width/height = ", vp.width, vp.height); 
-    console.log("  zoom width/height = ", zoom.width, zoom.height); 
   };
 
   API.render = function render (texture) {

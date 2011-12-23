@@ -274,6 +274,7 @@ var glimr = (function() {
     'shaders'  : {},
     'textures' : {},
     'ready'    : false,
+    'caps'     : { 'MAX_VIEWPORT_DIMS' : 0 },
   };
 
   API.shaders['vertexshader'] = new Shader("./shaders/vertexshader.gl");
@@ -310,6 +311,7 @@ var glimr = (function() {
       gl = canvas.getContext("experimental-webgl", preferredAttribs); 
     } catch (e) {}
 
+    API.caps['MAX_VIEWPORT_DIMS'] = gl.getParameter(GL.MAX_VIEWPORT_DIMS);
     return gl;
   };
 
@@ -498,6 +500,8 @@ var glimr = (function() {
   var canvas = document.querySelector("#canvas");
   var gl = glimr.getContext(canvas);
   console.log("GL context for", canvas, ":", gl);
+
+  console.log("GL capabilities: ", glimr.caps);
 
   var success = glimr.shaders.fragmentshader.build(gl, glimr.shaders.vertexshader);
   if (!success) 
