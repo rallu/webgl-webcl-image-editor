@@ -27,7 +27,7 @@ var  UI = {
   maskdrawmode: false,
 
   // zoom window width relative to full image width
-  zoomwidth: 1.0, 
+  zoomWidth: 1.0, 
 
   //effect values
   effects: {
@@ -73,14 +73,15 @@ var  UI = {
     var $this = this;
     
     /**
-     * Resize canvas size on browser window resize
+     * Resize canvas & viewport on browser window resize
      */
     $(window).bind('resize', function() {
+      var width = $(window).width();
+      var height = $(window).height();
       var canvas = $("#canvas")[0];
-      canvas.width = $(window).width();
-      canvas.height = $(window).height();
-      var zoomFunc = $this.zoomed ? Editor.zoom : Editor.setupViewport;
-      zoomFunc(canvas);
+      canvas.width = width;
+      canvas.height = height;
+      Editor.setViewport(width, height);
       Editor.render();
     });
 
@@ -88,11 +89,11 @@ var  UI = {
      * Zoom in/out
      */
     $("#canvas").bind('mousewheel', function(event, delta) {
-      var canvas = $("#canvas")[0];
       var dir = delta > 0 ? 'In' : 'Out';
       var vel = Math.abs(delta);
-      $this.zoomwidth *= (1.0 - 0.1*delta);
-      Editor.zoom(canvas, $this.zoomwidth);
+      $this.zoomWidth *= (1.0 - 0.1*delta);
+      $this.zoomWidth = Math.min($this.zoomWidth, 1.0);
+      Editor.setZoom(1.0 / $this.zoomWidth);
       Editor.render();
     });
     
@@ -123,8 +124,9 @@ var  UI = {
       $(img).load(function() {
         //$("#canvas").css("backgroundImage", "url("+img.src+")");
         $("#spinner").fadeOut('slow');
-        $this.zoomwidth = 1.0;
+        $this.zoomWidth = 1.0;
         Editor.setupImage(img);
+        Editor.render();
       });
       var datahref = $(this).attr("data-href");
       setTimeout(function() {

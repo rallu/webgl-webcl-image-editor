@@ -1,24 +1,36 @@
 /**
  * Default vertex shader. Simply passes the given X, Y coordinates
- * through to the fragment shader, leaving the Z coordinate zero.
+ * through to the rasterizer, scaled according to the desired zoom
+ * level. The tricky part is maintaining pixel aspect ratio at 1:1
+ * when the image and viewport aspect ratios can be arbitrary.
  *
- * @param {attribute vec2} position
- * @param {uniform vec4} zoom
- * @return {varying vec2} texcoords
+ * @param {attribute vec2} position vertex coordinates in {-1, 1} x {-1, 1}
+ * @param {uniform vec2} imageSize image width and height in pixels
+ * @param {uniform vec2} viewportSize viewport width and height in pixels
+ * @param {uniform float} zoom desired image magnification factor (usually >= 1.0)
+ * @return {varying vec2} texcoords vertex texture coordinates in {0, 1} x {0, 1}
  *
- * @copyright Tomi Aarnio, Nokia Research Tampere, 2011
+ * @copyright Tomi Aarnio, Nokia Research Tampere, 2012
  */
 
 attribute vec2 position;
 
-varying vec2 texcoords;
+uniform vec2 imageSize;
+uniform vec2 viewportSize;
+uniform float zoom;
 
-uniform vec4 zoom;
+varying vec2 texcoords;
 
 void main()
 {
-  gl_Position = vec4(position, 0.0, 1.0);
+  float imageAspectRatio = imageSize.x / imageSize.y;
+  float viewportAspectRatio = viewportSize.x / viewportSize.y;
 
-  texcoords.x = position.x < 0.0 ? zoom.x : zoom.y;
-  texcoords.y = position.y < 0.0 ? zoom.z : zoom.w;
+  float fitX = imageAspectRatio / viewportAspectRatio;
+  float fitY = viewportAspectRatio / imageAspectRatio;
+  vec2 fit = min(vec2(fitX, fitY), 1.0);
+
+  gl_Position = vec4(zoom*fit*position, 0.0, 1.0);
+
+  texcoords = sign(position + 1.0);  // map {-1, 1} to {0, 1}
 }

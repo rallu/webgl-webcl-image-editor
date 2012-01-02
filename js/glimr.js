@@ -66,7 +66,7 @@ Texture = function (gl) {
     API.gltexture = gl.createTexture();
     gl.bindTexture(GL.TEXTURE_2D, API.gltexture);
     gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST);
-    gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST);
+    gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.LINEAR);
     gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE);
     gl.texParameteri(GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE);
     gl.bindTexture(GL.TEXTURE_2D, null);
@@ -274,7 +274,7 @@ var glimr = (function() {
     'shaders'  : {},
     'textures' : {},
     'ready'    : false,
-    'caps'     : { 'MAX_VIEWPORT_DIMS' : 0 },
+    'caps'     : { 'MAX_VIEWPORT_DIM' : 0 },
   };
 
   API.shaders['vertexshader'] = new Shader("./shaders/vertexshader.gl");
@@ -311,8 +311,14 @@ var glimr = (function() {
       gl = canvas.getContext("experimental-webgl", preferredAttribs); 
     } catch (e) {}
 
-    API.caps['MAX_VIEWPORT_DIMS'] = gl.getParameter(GL.MAX_VIEWPORT_DIMS);
+    API.getCaps(gl);
     return gl;
+  };
+
+  API.getCaps = function getCaps (gl) {
+    var vpMaxDims = gl.getParameter(GL.MAX_VIEWPORT_DIMS);
+    var vpMinMaxDim = Math.min(vpMaxDims[0], vpMaxDims[1]);
+    API.caps['MAX_VIEWPORT_DIM'] = vpMinMaxDim;
   };
 
   API.createRenderTarget = function createRenderTarget (gl, texture) {
