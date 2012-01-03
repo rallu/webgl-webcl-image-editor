@@ -22,6 +22,8 @@ Editor = (function() {
     gl             : null,
     viewport       : { topx:0, topy:0, width:0, height:0 },
     magnification  : 1.0,
+    offsetX        : 0.0,
+    offsetY        : 0.0,
     imageWidth     : 0,
     imageHeight    : 0,
   };
@@ -38,45 +40,51 @@ Editor = (function() {
   API.setupImage = function setupImage (image) {
     var gl = API.gl;
     var canvas = API.canvas;
-    console.log("previous canvas size:", canvas.width, canvas.height);
+    LOG("previous canvas size:", canvas.width, canvas.height);
     canvas.width = $(window).width();
     canvas.height = $(window).height();
-    console.log("new canvas size:", canvas.width, canvas.height);
+    LOG("new canvas size:", canvas.width, canvas.height);
     API.imageWidth = image.width;
     API.imageHeight = image.height;
     API.setViewport(canvas.width, canvas.height);
     API.setZoom(1.0);
+    API.setOffset(0.0, 0.0);
 
     glimr.textures.original.texImage2D(gl, gl.RGB, true, image);
     glimr.textures.filtered.texImage2D(gl, gl.RGB, true, image);
     glimr.textures.mask.texImage2D(gl, gl.RGBA, true, image);
     glimr.textures.result.texImage2D(gl, gl.RGBA, true, image);
-    console.log("Created a new texture:", glimr.textures.original);
-    console.log("Created a new texture:", glimr.textures.filtered);
-    console.log("Created a new texture:", glimr.textures.mask);
-    console.log("Created a new texture:", glimr.textures.result);
+    LOG("Created a new texture:", glimr.textures.original);
+    LOG("Created a new texture:", glimr.textures.filtered);
+    LOG("Created a new texture:", glimr.textures.mask);
+    LOG("Created a new texture:", glimr.textures.result);
   };
 
   /**
    * Sets the viewport to the given width and height.
    */
-  API.setViewport = function setupViewport (vpWidth, vpHeight) {
+  API.setViewport = function setupViewport (vpWidth, vpHeight, vpTopX, vpTopY) {
 
     var vp = API.viewport;
     vp.width = vpWidth;
     vp.height = vpHeight;
-    vp.topx = 0;
-    vp.topy = 0;
+    vp.topx = vpTopX || 0;
+    vp.topy = vpTopY || 0;
     gl.viewport(vp.topx, vp.topy, vp.width, vp.height);
 
-    console.log("Editor.setViewport:");
-    console.log("  image width/height = ", API.imageWidth, API.imageHeight);
-    console.log("  canvas width/height = ", API.canvas.width, API.canvas.height);
-    console.log("  viewport width/height = ", vp.width, vp.height); 
+    LOG("Editor.setViewport:");
+    LOG("  image width/height = ", API.imageWidth, API.imageHeight);
+    LOG("  canvas width/height = ", API.canvas.width, API.canvas.height);
+    LOG("  viewport width/height = ", vp.width, vp.height); 
   };
 
   API.setZoom = function setZoom (zoomFactor) {
     API.magnification = zoomFactor;
+  };
+
+  API.setOffset = function setOffset (offsetX, offsetY) {
+    API.offsetX = offsetX;
+    API.offsetY = offsetY;
   };
 
   API.render = function render (texture) {
@@ -89,13 +97,44 @@ Editor = (function() {
       'viewportSize' : [API.viewport.width, API.viewport.height],
       'imageSize' : [API.imageWidth, API.imageHeight],
       'zoom' : API.magnification,
+      'offset' : [2*API.offsetX, -2*API.offsetY],
       'src' : texture,
     };
-    console.log("render, uniforms = ", uniforms);
+    LOG("render, uniforms = ", uniforms);
 
     var gl = API.gl;
     gl.clear(GL.COLOR_BUFFER_BIT);
     glimr.render(gl, 'fragmentshader', texture, uniforms);
+  };
+
+  API.setDebug = function setDebug (enableDebug) {
+    API.debugEnabled = enableDebug;
+  };
+
+  function LOG () {
+    if (API.debugEnabled !== false) {
+      var args = Array.prototype.slice.call(arguments, 0);
+      switch (args.length) {
+      case 1:
+        console.log(args[0]);
+        break;
+      case 2:
+        console.log(args[0], args[1]);
+        break;
+      case 3:
+        console.log(args[0], args[1], args[2]);
+        break;
+      case 4:
+        console.log(args[0], args[1], args[2], args[3]);
+        break;
+      case 5:
+        console.log(args[0], args[1], args[2], args[3], args[4]);
+        break;
+      default:
+        console.log(args);
+        break;
+      }
+    }
   };
 
   return API;

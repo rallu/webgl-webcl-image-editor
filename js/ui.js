@@ -7,6 +7,19 @@
  * 
  */
 
+// requestAnimationFrame compatibility wrapper by Paul Irish
+  
+window.requestAnimFrame = (function() {
+  return window.requestAnimationFrame  || 
+    window.webkitRequestAnimationFrame || 
+    window.mozRequestAnimationFrame    || 
+    window.oRequestAnimationFrame      || 
+    window.msRequestAnimationFrame     || 
+    function(/* function */ callback, /* DOMElement */ element){
+      window.setTimeout(callback, 1000 / 60);
+     };
+})();
+
 var  UI = {
   // is footer visible in mainscreen
   footervisible: false,
@@ -22,6 +35,9 @@ var  UI = {
   
   // are we currently pressing button on canvas
   canvasdown: false,
+
+  // is the mouse button currently pressed
+  mousedown: false,
   
   // can brush be drawn top of canvas
   maskdrawmode: false,
@@ -91,10 +107,38 @@ var  UI = {
     $("#canvas").bind('mousewheel', function(event, delta) {
       var dir = delta > 0 ? 'In' : 'Out';
       var vel = Math.abs(delta);
-      $this.zoomWidth *= (1.0 - 0.1*delta);
-      $this.zoomWidth = Math.min($this.zoomWidth, 1.0);
-      Editor.setZoom(1.0 / $this.zoomWidth);
-      Editor.render();
+      $this.animateZoom(delta);
+      //$this.zoomWidth *= (1.0 - 0.1*delta);
+      //$this.zoomWidth = Math.min($this.zoomWidth, 1.0);
+      //Editor.setZoom(1.0 / $this.zoomWidth);
+      //Editor.render();
+    });
+
+    $("#canvas").bind('mousedown', function(event) {
+      if (event.which == 1) {  // left mouse button pressed?
+        console.log("mouse down: ", event.pageX, event.pageY);
+        $this.mousedown = true;
+        $this.mousePathStartX = event.pageX;
+        $this.mousePathStartY = event.pageY;
+      }
+    });
+
+    $(window).bind('mousemove', function(event) {
+      if ($this.mousedown == true) {
+        var pixelOffsetX = event.pageX - $this.mousePathStartX;
+        var pixelOffsetY = event.pageY - $this.mousePathStartY;
+        var relativeOffsetX = pixelOffsetX / $(window).width();
+        var relativeOffsetY = pixelOffsetY / $(window).height();
+        Editor.setOffset(relativeOffsetX, relativeOffsetY);
+        Editor.render();
+      }
+    });
+
+    $(window).bind('mouseup', function(event) {
+      if ($this.mousedown == true) {
+        console.log("mouse up: ", event.pageX, event.pageY);
+        $this.mousedown = false;
+      }
     });
     
     /**
@@ -377,6 +421,41 @@ var  UI = {
     $("#effectslider").slider({
       min: min,
       max: max
+    });
+  },
+
+  animateZoom: function(delta) {
+
+    if (this.animationComplete == false) {
+      console.log("previous zoom ongoing, bailing out...");
+      return;
+    }
+
+    var $this = this;
+
+    var prevZoom = 1.0 / this.zoomWidth;
+    this.zoomWidth *= (1.0 - 0.2*delta);
+    this.zoomWidth = Math.min(this.zoomWidth, 1.0);
+    this.zoomWidth = Math.max(this.zoomWidth, 0.01);
+    var newZoom = 1.0 / this.zoomWidth;
+    console.log("prev, new zoom: ", prevZoom, newZoom);
+    var startTime = new Date().getTime();
+
+    window.requestAnimFrame(function() {
+      var elapsed = new Date().getTime() - startTime;
+      var tStep = Math.min(elapsed / 200, 1.0);
+      var aStep = (newZoom - prevZoom) * tStep;
+      //console.log("steps: ", tStep, aStep);
+      Editor.setZoom(prevZoom + aStep);
+      Editor.setDebug(false);
+      Editor.render();
+      Editor.setDebug(true);
+      if (elapsed < 200) {
+        $this.animationComplete = false;
+        window.requestAnimFrame(this);
+      } else {
+        $this.animationComplete = true;
+      }
     });
   },
 
