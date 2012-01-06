@@ -80,6 +80,20 @@ var  UI = {
   init: function() {
     this.initEvents();
     this.initBrush();
+    this.initDocument();
+  },
+
+  /**
+   * Init document changes on startup
+   */
+  initDocument: function() {
+    //wrap imagelist images with span
+    $("#imagelist img").each(function() {
+      $(this).wrap(function() {
+        return '<span style="background:url(' + $(this).attr('src') + ') no-repeat center center; width: ' + $(this).width() + 'px; height: ' + $(this).height() + 'px;" />';
+      });
+      $(this).css("opacity", "0");
+    });
   },
 
   /**
@@ -147,7 +161,7 @@ var  UI = {
     $("#filemenubutton").click(function(event) {
       if ($this.footervisible) {
         $("footer").animate({
-          bottom: "-300px"
+          bottom: "-310px"
         }, 500);
       } else {
         $("footer").animate({
@@ -173,9 +187,9 @@ var  UI = {
         Editor.render();
       });
       var datahref = $(this).attr("data-href");
-      setTimeout(function() {
+      //setTimeout(function() {
         img.src = datahref;
-      }, 1000);
+      //}, 1000);
 
       $("#filemenubutton").click();
       event.preventDefault();
