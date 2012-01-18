@@ -17,20 +17,24 @@ Editor = (function() {
 
   var GL = WebGLRenderingContext;
 
-  API = {
+  var locals = {
     canvas         : null,
     gl             : null,
     viewport       : { topx:0, topy:0, width:0, height:0 },
     magnification  : 1.0,
+    baseOffsetX    : 0.0,
+    baseOffsetY    : 0.0,
     offsetX        : 0.0,
     offsetY        : 0.0,
     imageWidth     : 0,
     imageHeight    : 0,
   };
 
+  var API = {};
+
   API.setup = function setup (canvas) {
-    API.canvas = canvas;
-    API.gl = gl = glimr.getContext(canvas);
+    locals.canvas = canvas;
+    locals.gl = gl = glimr.getContext(canvas);
     glimr.textures.original = new Texture(gl);
     glimr.textures.filtered = new Texture(gl);
     glimr.textures.mask = new Texture(gl);
@@ -38,14 +42,14 @@ Editor = (function() {
   };
 
   API.setupImage = function setupImage (image) {
-    var gl = API.gl;
-    var canvas = API.canvas;
+    var gl = locals.gl;
+    var canvas = locals.canvas;
     LOG("previous canvas size:", canvas.width, canvas.height);
     canvas.width = $(window).width();
     canvas.height = $(window).height();
     LOG("new canvas size:", canvas.width, canvas.height);
-    API.imageWidth = image.width;
-    API.imageHeight = image.height;
+    locals.imageWidth = image.width;
+    locals.imageHeight = image.height;
     API.setViewport(canvas.width, canvas.height);
     API.setZoom(1.0);
     API.setOffset(0.0, 0.0);
@@ -65,7 +69,7 @@ Editor = (function() {
    */
   API.setViewport = function setupViewport (vpWidth, vpHeight, vpTopX, vpTopY) {
 
-    var vp = API.viewport;
+    var vp = locals.viewport;
     vp.width = vpWidth;
     vp.height = vpHeight;
     vp.topx = vpTopX || 0;
@@ -73,18 +77,30 @@ Editor = (function() {
     gl.viewport(vp.topx, vp.topy, vp.width, vp.height);
 
     LOG("Editor.setViewport:");
-    LOG("  image width/height = ", API.imageWidth, API.imageHeight);
-    LOG("  canvas width/height = ", API.canvas.width, API.canvas.height);
+    LOG("  image width/height = ", locals.imageWidth, locals.imageHeight);
+    LOG("  canvas width/height = ", locals.canvas.width, locals.canvas.height);
     LOG("  viewport width/height = ", vp.width, vp.height); 
   };
 
   API.setZoom = function setZoom (zoomFactor) {
-    API.magnification = zoomFactor;
+    locals.magnification = zoomFactor;
   };
 
   API.setOffset = function setOffset (offsetX, offsetY) {
-    API.offsetX = offsetX;
-    API.offsetY = offsetY;
+    locals.baseOffsetX = offsetX;
+    locals.baseOffsetY = offsetY;
+    locals.offsetX = locals.baseOffsetX;
+    locals.offsetY = locals.baseOffsetY;
+  };
+
+  API.addOffset = function addOffset (offsetX, offsetY) {
+    locals.offsetX = locals.baseOffsetX + offsetX;
+    locals.offsetY = locals.baseOffsetY + offsetY;
+  };
+
+  API.setBaseOffset = function setBaseOffset () {
+    locals.baseOffsetX = locals.offsetX;
+    locals.baseOffsetY = locals.offsetY;
   };
 
   API.render = function render (texture) {
@@ -94,25 +110,25 @@ Editor = (function() {
     }
 
     var uniforms = {
-      'viewportSize' : [API.viewport.width, API.viewport.height],
-      'imageSize' : [API.imageWidth, API.imageHeight],
-      'zoom' : API.magnification,
-      'offset' : [2*API.offsetX, -2*API.offsetY],
+      'viewportSize' : [locals.viewport.width, locals.viewport.height],
+      'imageSize' : [locals.imageWidth, locals.imageHeight],
+      'zoom' : locals.magnification,
+      'offset' : [2*locals.offsetX, -2*locals.offsetY],
       'src' : texture,
     };
     LOG("render, uniforms = ", uniforms);
 
-    var gl = API.gl;
+    var gl = locals.gl;
     gl.clear(GL.COLOR_BUFFER_BIT);
     glimr.render(gl, 'fragmentshader', texture, uniforms);
   };
 
   API.setDebug = function setDebug (enableDebug) {
-    API.debugEnabled = enableDebug;
+    locals.debugEnabled = enableDebug;
   };
 
   function LOG () {
-    if (API.debugEnabled !== false) {
+    if (locals.debugEnabled !== false) {
       var args = Array.prototype.slice.call(arguments, 0);
       switch (args.length) {
       case 1:

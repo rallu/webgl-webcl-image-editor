@@ -32,7 +32,18 @@ void main()
   float fitY = viewportAspectRatio / imageAspectRatio;
   vec2 fit = min(vec2(fitX, fitY), 1.0);
 
-  gl_Position = vec4(zoom*fit*position+offset, 0.0, 1.0);
+  // The right edge of the picture must not cross the right edge of
+  // the viewport, and similarly for the left, top and bottom edges.
+
+  vec2 clampedOffset = offset;
+  if (offset.x > zoom * fit.x - fit.x) { // over the right edge (+1)?
+    clampedOffset.x = zoom * fit.x - fit.x;
+  }
+  if (offset.x < -zoom * fit.x + fit.x) {
+    clampedOffset.x = -zoom * fit.x + fit.x;
+  }
+
+  gl_Position = vec4(zoom*fit*position + clampedOffset, 0.0, 1.0);
 
   texcoords = sign(position + 1.0);  // map {-1, 1} to {0, 1}
 }
