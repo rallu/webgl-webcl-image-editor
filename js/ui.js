@@ -27,9 +27,9 @@ UI = (function() {
     brushsizectx: null,        // 2d context for brush size preview
     brushctx: null,            // drawing brush 2d context
     invertbrush: false,        // is drawing brush inverted
-    canvasdown: false,         // are we currently pressing the mouse button on canvas
-    mousedown: false,          // is the mouse button currently pressed
-    maskdrawmode: false,       // can brush be drawn on top of canvas
+    invertmask: false,         // is drawing mask inverted
+    panning:false,             // are we currently panning the image
+    painting:false,            // are we currently painting the mask
     zoomWidth: 1.0,            // zoom window width relative to full width
     effects: {
       sharpen: {
@@ -103,7 +103,9 @@ UI = (function() {
       });
 
       /**
-       * Zoom in/out
+       * Zooming. 
+       *
+       * TODO: Implement pinch zoom for touch displays.
        */
       $("#canvas").bind('mousewheel', function(event, delta) {
         var dir = delta > 0 ? 'In' : 'Out';
@@ -111,35 +113,64 @@ UI = (function() {
         API.animateZoom(delta);
       });
 
+      /**
+       * Panning and painting. Painting is done with the left mouse
+       * button held down, panning with the right.  TODO: Deal with
+       * mouse events that happen outside the browser window.
+       *
+       * TODO: Single-touch for painting, dual-touch for panning.
+       */
       $("#canvas").bind('mousedown', function(event) {
-        if (event.which == 1) {  // left mouse button pressed?
-          console.log("mouse down: ", event.pageX, event.pageY);
-          locals.mousedown = true;
+        event.preventDefault();
+        if (event.which === 1) {
+          console.log("painting started at", event.pageX, event.pageY);
+          locals.panning = false;
+          locals.painting = true;
+          $(".button").css("pointer-events", "none");
+          $("#thebrush").css("left", event.pageX - 85);
+          $("#thebrush").css("top", event.pageY - 85);
+          $("#thebrush").show();
+        } else if (event.which === 3) {
+          console.log("panning started at", event.pageX, event.pageY);
+          locals.panning = true;
+          locals.painting = false;
           locals.mousePathStartX = event.pageX;
           locals.mousePathStartY = event.pageY;
         }
       });
 
       $(window).bind('mousemove', function(event) {
-        if (locals.mousedown == true) {
+        event.preventDefault();
+        if (locals.panning === true) {
           var pixelOffsetX = event.pageX - locals.mousePathStartX;
           var pixelOffsetY = event.pageY - locals.mousePathStartY;
           var relativeOffsetX = pixelOffsetX / $(window).width();
           var relativeOffsetY = pixelOffsetY / $(window).height();
-          //Editor.setOffset(relativeOffsetX, relativeOffsetY);
           Editor.addOffset(relativeOffsetX, relativeOffsetY);
           Editor.render();
+        } else if (locals.painting === true) {
+          $("#thebrush").css("left", event.pageX - 85);
+          $("#thebrush").css("top", event.pageY - 85);
         }
       });
 
       $(window).bind('mouseup', function(event) {
-        if (locals.mousedown == true) {
-          console.log("mouse up: ", event.pageX, event.pageY);
+        event.preventDefault();
+        if (locals.panning === true) {
+          locals.panning = false;
           Editor.setBaseOffset();
-          locals.mousedown = false;
+        } else if (locals.painting === true) {
+          locals.painting = false;
+          event.preventDefault();
+          $("#thebrush").hide();
+          $(".button").css("pointer-events", "auto");
         }
       });
-      
+
+      $("#canvas").bind('click', function(event) {
+        event.preventDefault();
+      });
+
       /**
        * Main screen file button click
        */
@@ -211,10 +242,14 @@ UI = (function() {
       });
 
       /**
-       * Closes dropdown on main menu on every mouse up event
+       * Closes dropdowns on main menu and elsewhere on every mouse up
+       * event.
        */
-      $("body").mouseup(function() {
-        $("#modeselector .button ul").hide();
+      $(window).mouseup(function() {
+        $("#modeselector .button ul").hide();    // main menu
+        $("#buttonBrush").removeClass("active"); // paint menu
+        $("#brushsettings").hide();
+        $("#brushpreview").hide();
       });
 
       /**
@@ -223,7 +258,7 @@ UI = (function() {
       $(".hidedialog").click(function() {
         var top = parseInt($(this).parent().css("top"));
         var pheight = $(this).parent().height() + 40;
-        if (top == 0) {
+        if (top === 0) {
           $(this).html("▼");
           $(this).parent().animate({
             top: -pheight
@@ -267,14 +302,18 @@ UI = (function() {
       /**
        * In mask view pressing Brush Size button
        */
-      $("#buttonBrush").click(function() {
-        if ($(this).hasClass("active")) {
-          $(this).removeClass("active");
-          $("#brushsettings").fadeOut('fast');
-        } else {
-          $(this).addClass("active");
-          $("#brushsettings").fadeIn('fast');
-        }
+      $("#buttonBrush").mousedown(function() {
+        $(this).addClass("active");
+        $("#brushsettings").fadeIn('fast');
+        $("#brushpreview").fadeIn('fast');
+        var offset = $("#brushsizeslider .ui-slider-handle").offset();
+        $("#brushpreview").css("left", offset.left - 90);
+        var sliderValue = $("#brushsizeslider").slider("value");
+        API.drawBrush(sliderValue);
+      });
+
+      $("#buttonBrush").mouseup(function() {
+        // default to the global window.mouseup handler
       });
 
       /**
@@ -289,64 +328,35 @@ UI = (function() {
        * In mask view pressing Invert mask button
        */
       $("#buttonInvertMask").click(function() {
-
+        $(this).toggleClass("active");
+        locals.invertmask = $(this).hasClass("active");
       });
 
       /**
        * Create brush size slider
        */
-      $("#brushsizeslider").slider({
-        min: 10,
-        max: 80,
-        value: 20,
-        start: function(event, ui) {
-          API.drawBrush(ui.value);
-          $("#brushpreview").fadeIn('fast');
-          var offset = $("#brushsizeslider .ui-slider-handle").offset();
-          $("#brushpreview").css("left", offset.left - 90);
-        },
-        stop: function(event, ui) {
-          $("#brushpreview").fadeOut('fast');
-          $("#brushsettings").fadeOut('fast');
-          $("#buttonBrush").removeClass('active');
-        },
+      $("#brushsizeslider").bind({
         slide: function(event, ui) {
           var offset = $("#brushsizeslider .ui-slider-handle").offset();
           $("#brushpreview").css("left", offset.left - 90);
           API.drawBrush(ui.value);
-        }
-      });
-
-      /**
-       * Events for drawing brush on top of canvas
-       */
-      $("#canvas").mousedown(function(event) {
-        event.preventDefault();
-
-        if (!locals.maskdrawmode)
-          return;
-
-        $(".button").css("pointer-events", "none");
-        locals.canvasdown = true;
-        $("#thebrush").show();
-      }).mousemove(function(event) {
-        event.preventDefault();
-
-        if (!locals.canvasdown)
-          return;
-
-        $("#thebrush").css("left", event.pageX - 85);
-        $("#thebrush").css("top", event.pageY - 85);
-      }).mouseup(function(event) {
-        locals.canvasdown = false;
-        $("#thebrush").hide();
-        event.preventDefault();
-        $(".button").css("pointer-events", "auto");
-      }).click(function(event) {
-        event.preventDefault();
+        },
+      }).slider({
+        min: 10,
+        max: 80,
+        value: 20
+      }).bind('mouseover mousemove mouseout', function(event) {
+        var slider = $("#brushsizeslider");
+        var relX = (event.pageX - slider.offset().left) / slider.width();
+        relX = relX > 1.0 ? 1.0 : (relX < 0.0 ? 0.0 : relX);
+        var sliderMin = 10;
+        var sliderMax = 80;
+        var sliderValue = sliderMin + (sliderMax - sliderMin) * relX;
+        $("#brushsizeslider").slider("value", sliderValue);
+        $("#brushsizeslider").slider().trigger("slide", { value: sliderValue });
       });
     },
-    
+
     /**
      * Inits brush 2d context's
      */
@@ -377,7 +387,6 @@ UI = (function() {
         locals.brushsizectx.fill();
       }
 
-
       locals.brushctx.clearRect(0,0,170,170);
       locals.brushctx.lineWidth = 4;
       locals.brushctx.strokeStyle = 'rgba(254,180,28,0.5)';
@@ -397,7 +406,7 @@ UI = (function() {
     },
 
     /**
-     * After selecing effect in main screen
+     * After selecting effect in main screen
      * 
      * @param (effectName) Effects name received from ul li menu. 
      */
@@ -410,8 +419,6 @@ UI = (function() {
       $("#effectsdialog").fadeIn();
       $("#maskselection").fadeIn();
 
-      locals.maskdrawmode = true;
-
       var min = eval("this.effects."+effectName+".minval");
       var max = eval("this.effects."+effectName+".maxval");
 
@@ -423,7 +430,7 @@ UI = (function() {
 
     animateZoom: function(delta) {
 
-      if (locals.animationComplete == false) {
+      if (locals.animationComplete === false) {
         console.log("previous zoom ongoing, bailing out...");
         return;
       }
@@ -460,7 +467,6 @@ UI = (function() {
     showMainScreen: function() {
       $("section").fadeOut();
       $("#modeselector").fadeIn();
-      locals.maskdrawmode = false;
     },
 
     /**
@@ -468,8 +474,6 @@ UI = (function() {
      */
     showColorSelection: function() {
       this.resetViewSettings();
-
-      locals.maskdrawmode = true;
 
       $("section").fadeOut();
       $("#colorchanger").fadeIn();
@@ -488,6 +492,7 @@ UI = (function() {
       $("#brushsettings").hide();
       $("#maskbuttons .active").removeClass("active");
       locals.invertbrush = false;
+      locals.invertmask = false;
     }
   };
 
